@@ -2,90 +2,90 @@ import cv2
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-from filter import applyFilter,medianFilter
-
+from .filter import applyFilter,medianFilter
+# http://localhost:8000/media/images/my-node_OMXKIqV.png
+# http://localhost:8000/accounts/api/centroid/
+#  Add id = 9 in body
+# [{"key":"Authorization","value":"Token 50fe836fdd78b2456a902c50d81fb494cc9d7315","description":"","type":"text","enabled":true}]
+# https://stackoverflow.com/questions/53688225/typeerror-required-argument-mat-pos-2-not-found
 def getCentroidImage(imgId=None,imgUrl=None):
-    try:
-        img = cv2.imread(imgUrl)
-
-        ret,binary = cv2.threshold(img,10,255,cv2.THRESH_BINARY)
-
-        def findBB(im):
-            h, w = im.shape[0], im.shape[1] 
-            left, top = w, h
-            right, bottom = 0, 0
-            
-            for x in range(h):
-                for y in range(w):
-                    if (im[x,y] == 0):
-                        right = x if x > right else right
-                        left = x if x < left else left
-                        bottom = y if y > bottom else bottom
-                        top = y if y < top else top
-                        
-            return (left, right, top, bottom)
-
-        def findCentroid(im):
-            h, w = im.shape[0], im.shape[1]
-            cx, cy, n = 0, 0, 0
-            for x in range(h):
-                for y in range(w):
-                    if (im[x,y] == 0):
-                        cx += x
-                        cy += y
-                        n += 1
-            cx //= n
-            cy //= n
-            return (cx, cy)
-
-        def divideImgIntoFour(im, cent):
-            h, w = im.shape[0], im.shape[1]
-            cx, cy = cent
-            img1 = im[0:cx, 0:cy]
-            img2 = im[0:cx, cy:w]
-            img3 = im[cx:h, 0:cy]
-            img4 = im[cx:h, cy:w]
-            return [img1, img2, img3, img4]
-
-        def calculateTransitions(im):
-            h, w = im.shape[0], im.shape[1]
-            prev = im[0,0]
-            n = 0
-            for x in range(1, h):
-                for y in range(1, w):
-                    curr = im[x,y]
-                    # check if the is black to white transition
-                    n = n+1 if curr == 255 and prev == 0 else n
-                    prev = curr
-            return n
-
-        boundingBox = findBB(binary)
-        cropImg = binary[boundingBox[0]:boundingBox[1], boundingBox[2]:boundingBox[3]]
-        centroid = findCentroid(cropImg)
-        segments = divideImgIntoFour(cropImg, centroid)
-        transitions = [calculateTransitions(seg) for seg in segments]
-
-        print("Bounding Box:", boundingBox)
-        print("Coordinates of centroid:", centroid)
-        print("Black to white transitions (4 segments):", transitions)
-
-        topLeft="centroid_TopLeft_"+imgId+".png"
-        topRight="centroid_TopRight"+imgId+".png"
-        bottomLeft="centroid_BottomLeft"+imgId+".png"
-        bottomRight="centroid_BottomRight"+imgId+".png"
-        #cv2.imshow("TopLeft", segments[0])
-        #cv2.imshow("TopRight", segments[1])
-        #cv2.imshow("BottomLeft", segments[2])
-        #cv2.imshow("BottomRight", segments[3])
-        cv2.imwrite(topLeft, segments[0])
-        cv2.imwrite(topRight, segments[1])
-        cv2.imwrite(bottomLeft, segments[2])
-        cv2.imwrite(bottomRight, segments[3])
+    print(imgId, imgUrl)
+    # try:
+    img = cv2.imread(imgUrl, 0)
+    print(img)
+    cv2.imshow('',img)
+    ret,binary = cv2.threshold(img,10,255,cv2.THRESH_BINARY)
+    def findBB(im):
+        h, w = im.shape[0], im.shape[1] 
+        left, top = w, h
+        right, bottom = 0, 0
         
-        return [topLeft,topRight,bottomLeft,bottomRight];
-        #cv2.waitKey(0)
-    except Exception as e:
-        print("IMAGE KA LINK DE@!!")
+        for x in range(h):
+            for y in range(w):
+                if (im[x,y] == 0):
+                    right = x if x > right else right
+                    left = x if x < left else left
+                    bottom = y if y > bottom else bottom
+                    top = y if y < top else top
+                    
+        return (left, right, top, bottom)
+    def findCentroid(im):
+        h, w = im.shape[0], im.shape[1]
+        cx, cy, n = 0, 0, 0
+        for x in range(h):
+            for y in range(w):
+                if (im[x,y] == 0):
+                    cx += x
+                    cy += y
+                    n += 1
+        cx //= n
+        cy //= n
+        return (cx, cy)
+    def divideImgIntoFour(im, cent):
+        h, w = im.shape[0], im.shape[1]
+        cx, cy = cent
+        img1 = im[0:cx, 0:cy]
+        img2 = im[0:cx, cy:w]
+        img3 = im[cx:h, 0:cy]
+        img4 = im[cx:h, cy:w]
+        return [img1, img2, img3, img4]
+    def calculateTransitions(im):
+        h, w = im.shape[0], im.shape[1]
+        prev = im[0,0]
+        n = 0
+        for x in range(1, h):
+            for y in range(1, w):
+                curr = im[x,y]
+                # check if the is black to white transition
+                n = n+1 if curr == 255 and prev == 0 else n
+                prev = curr
+        return n
+    boundingBox = findBB(binary)
+    cropImg = binary[boundingBox[0]:boundingBox[1], boundingBox[2]:boundingBox[3]]
+    centroid = findCentroid(cropImg)
+    segments = divideImgIntoFour(cropImg, centroid)
+    transitions = [calculateTransitions(seg) for seg in segments]
+    print("Bounding Box:", boundingBox)
+    print("Coordinates of centroid:", centroid)
+    print("Black to white transitions (4 segments):", transitions)
+    topLeft="centroid_TopLeft_"+imgId+".png"
+    topRight="centroid_TopRight"+imgId+".png"
+    bottomLeft="centroid_BottomLeft"+imgId+".png"
+    bottomRight="centroid_BottomRight"+imgId+".png"
+    #cv2.imshow("TopLeft", segments[0])
+    #cv2.imshow("TopRight", segments[1])
+    #cv2.imshow("BottomLeft", segments[2])
+    #cv2.imshow("BottomRight", segments[3])
+    # print(segments[0])
+    cv2.imwrite(topLeft, segments[0])
+    cv2.imwrite(topRight, segments[1])
+    cv2.imwrite(bottomLeft, segments[2])
+    cv2.imwrite(bottomRight, segments[3])
+    
+    return [topLeft,topRight,bottomLeft,bottomRight]
+        # cv2.waitKey(0)
+    # except Exception:
+    #     print("IMAGE KA LINK DE@!!")
 
 def getGradientImage(imgId=None,imgUrl=None):
     try:

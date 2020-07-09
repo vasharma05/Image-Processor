@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import UserSerializer
+from .serializers import UserSerializer, userImageSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
+from . import models
+from image_processing import project 
 # Create your views here.
 
 class SignupView(APIView):
@@ -33,3 +35,33 @@ class LoginView(APIView):
             return Response(message, status=200)
         else:
             return Response({'error': 'username or password is incorrect'}, status=200)
+    
+class UploadView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        try:
+            data = dict({
+                'user': request.user,
+                'image': request.data['image']
+            })
+            serialized_data = userImageSerializer(data = request.data, context={'request':request})
+            if(serialized_data.is_valid()):
+                serialized_data.save(user = request.user)
+            else:
+                message = {
+                    'detail':serialized_data.errors
+                }
+                return Response(message, status = 200)
+            return Response({'detail':'success', 'response': serialized_data.data}, status=200)
+        except:
+            return Response({'detail': 'Something went wrong'}, status=500)
+
+class CentroidView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        id = request.data['id']
+        user_image = models.userImage.objects.get(id=request.data['id'])
+        image_url = user_image.image.path
+        centroid = project.getCentroidImage(id, image_url)
+        return Response({'detail':'success'}, status=200)
+
