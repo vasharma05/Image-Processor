@@ -28,7 +28,7 @@ def applyFilter(img, filterSize=None, imFilter=None):
             filteredImg[row,col] = pixel
     #removing padded pixels
     filteredImg = filteredImg[paddingSize:filteredImg.shape[0]-paddingSize, paddingSize:filteredImg.shape[1]-paddingSize]
-    return filteredIm
+    return filteredImg
 
 def medianFilter(img, filterSize):
     #making deep copy of image
