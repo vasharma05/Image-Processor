@@ -6,8 +6,6 @@ class userImage(models.Model):
     user = models.ForeignKey(User, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(default='', upload_to='images/')
 
-    def __str__(self):
-        return self.user.username
 
 class CentroidImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='centroid', on_delete = models.CASCADE)
@@ -15,61 +13,41 @@ class CentroidImage(models.Model):
     centroid_1_url = models.CharField(max_length=256, default='')
     centroid_2_url = models.CharField(max_length=256, default='')
     centroid_3_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class GradientImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='gradient', on_delete = models.CASCADE)
     gradient_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
         
 class NegativeImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='negative', on_delete = models.CASCADE)
     negative_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class GrayscaleImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='grayscale', on_delete = models.CASCADE)
     grayscale_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class SegmentationImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='segmentation', on_delete = models.CASCADE)
     segmentation_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class HistogramImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='histogram', on_delete = models.CASCADE)
     histogram_0_url = models.CharField(max_length=256, default='')
     histogram_1_url = models.CharField(max_length=256, default='')
     histogram_2_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class AverageImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='average', on_delete = models.CASCADE)
     average_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class GaussianImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='gaussian', on_delete = models.CASCADE)
     gaussian_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class MedianImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='median', on_delete = models.CASCADE)
     median_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
 
 class SobelImage(models.Model):
     base_image = models.ForeignKey(userImage, related_name='sobel', on_delete = models.CASCADE)
     sobel_url = models.CharField(max_length=256, default='')
-    def __str__(self):
-        return self.base_image.user.username
