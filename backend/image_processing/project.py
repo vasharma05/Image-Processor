@@ -3,7 +3,8 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from filter import applyFilter,medianFilter
+from .filter import applyFilter,medianFilter
+from backend.settings import BASE_DIR
 # http://localhost:8000/media/images/my-node_OMXKIqV.png
 # http://localhost:8000/accounts/api/centroid/
 #  Add id = 9 in body
@@ -251,47 +252,42 @@ def getHistogramEqualization(imgId=None,imgUrl=None):
         print("SENd link")
 
 def getAverageFilter(imgId=None,imgUrl=None,size=None):
-    try:
+    # try:
         #reading image from file
-        im = cv2.imread(imgUrl,0).astype(np.float)
+    im = cv2.imread(imgUrl,0).astype(np.float)
+    #applying filter on image
+    img = applyFilter(im, filterSize=size)
+    #writing image to image file
+    imgName= "average_"+imgId+".png"
+    imgName= saveImage(imgName,img,"average")
 
-        #applying filter on image
-        img = applyFilter(im, filterSize=size)
-
-        #writing image to image file
-        imgName= "average_"+imgId+".png"
-        imgName= saveImage(imgName,img,"average")
-
-        return [imgName]
-    except Exception as e:
-        print(e)
-        print("Send link")
+    return [imgName]
+    # except Exception as e:
+    #     print(e)
+    #     print("Send link")
 
 def getGaussionFilter(imgId=None,imgUrl=None):
-    try:
-        #reading image from file
-        im = cv2.imread(imgUrl,0).astype(np.float)
-
-        gaussianFilter = np.array([[1,1,2,2,2,1,1],
-                           [1,2,2,4,2,2,1],
-                           [2,2,4,8,4,2,2],
-                           [2,4,8,16,8,4,2],
-                           [2,2,4,8,4,2,2],
-                           [1,2,2,4,2,2,1],
-                           [1,1,2,2,2,1,1]], np.float)
-        gaussianFilter /= np.sum(gaussianFilter*1.0)
-        
-        #applying filter on image
-        img = applyFilter(im, imFilter=gaussianFilter)
-
-        #writing image to image file
-        imgName= "gaussian_"+imgId+".png"
-        imgName= saveImage(imgName,img,"gaussian")
-
-        return [imgName]
-    except Exception as e:
-        print(e)
-        print("Send link")
+    # try:
+    #reading image from file
+    im = cv2.imread(imgUrl,0).astype(np.float)
+    gaussianFilter = np.array([[1,1,2,2,2,1,1],
+                       [1,2,2,4,2,2,1],
+                       [2,2,4,8,4,2,2],
+                       [2,4,8,16,8,4,2],
+                       [2,2,4,8,4,2,2],
+                       [1,2,2,4,2,2,1],
+                       [1,1,2,2,2,1,1]], np.float)
+    gaussianFilter /= np.sum(gaussianFilter*1.0)
+    
+    #applying filter on image
+    img = applyFilter(im, imFilter=gaussianFilter)
+    #writing image to image file
+    imgName= "gaussian_"+imgId+".png"
+    imgName= saveImage(imgName,img,"gaussian")
+    return [imgName]
+    # except Exception as e:
+    #     print(e)
+    #     print("Send link")
 
 def getMedianFilter(imgId=None,imgUrl=None,size=None):
     try:
@@ -338,23 +334,24 @@ def getSobel(imgId=None,imgUrl=None):
 def saveImage(filename=None,img=None,typeFilter=None):
     try:
 
-        directory=os.path.join(os.getcwd(),"media",typeFilter,filename)
-        if(cv2.imwrite(directory, img)):
-            print("SAVED "+directory)
-           
+        # directory=os.path.join(BASE_DIR,"media",typeFilter,filename)
+        d = 'media/{}/{}'.format(typeFilter, filename)
+        print(d)
+        if(cv2.imwrite(d, img)):
+            print("SAVED "+ d)
         else:
-            print("SAVE NI HUI "+directory)
-        return directory
+            print("SAVE NI HUI "+d)
+        return 'http://localhost:8000/{}'.format(d)
     except Exception as e:
         print(e)
 
-getCentroidImage("ll","/home/shivamsoods/Pictures/iig.png")
-getGradientImage("ii","/home/shivamsoods/Pictures/iig.png")
-getNegativeImage("ll","/home/shivamsoods/Pictures/iig.png")
-getGrayscaleImage("ll","/home/shivamsoods/Pictures/iig.png")
-getSegemtationImage("ll","/home/shivamsoods/Pictures/iig.png")
-getHistogramEqualization("ll","/home/shivamsoods/Pictures/iig.png")
-getAverageFilter("ll","/home/shivamsoods/Pictures/iig.png",3)
-getGaussionFilter("ll","/home/shivamsoods/Pictures/iig.png")
-getMedianFilter("ll","/home/shivamsoods/Pictures/iig.png",3)
-getSobel("ll","/home/shivamsoods/Pictures/iig.png")
+# getCentroidImage("ll","/home/shivamsoods/Pictures/iig.png") 4
+# getGradientImage("ii","/home/shivamsoods/Pictures/iig.png") 1
+# getNegativeImage("ll","/home/shivamsoods/Pictures/iig.png") 1
+# getGrayscaleImage("ll","/home/shivamsoods/Pictures/iig.png") 1
+# getSegemtationImage("ll","/home/shivamsoods/Pictures/iig.png") 1
+# getHistogramEqualization("ll","/home/shivamsoods/Pictures/iig.png") 3
+# getAverageFilter("ll","/home/shivamsoods/Pictures/iig.png",3) 1
+# getGaussionFilter("ll","/home/shivamsoods/Pictures/iig.png") 1
+# getMedianFilter("ll","/home/shivamsoods/Pictures/iig.png",3) 1
+# getSobel("ll","/home/shivamsoods/Pictures/iig.png") 1

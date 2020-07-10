@@ -5,6 +5,8 @@ import copy
 #call it with just filter size (averaging filter)
 #call it with given filter in imFilter
 def applyFilter(img, filterSize=None, imFilter=None):
+    if(filterSize is not None):
+        filterSize=int(filterSize)
     filteredImg = copy.deepcopy(img)
     #if filter is provided
     if (imFilter is not None):
@@ -34,6 +36,7 @@ def medianFilter(img, filterSize):
     #making deep copy of image
     filteredImg = copy.deepcopy(img)
     #calculating padding size
+    filterSize=int(filterSize)
     paddingSize = filterSize//2
     #padding the image
     filteredImg = np.pad(filteredImg, (paddingSize, paddingSize), 'constant', constant_values=(0))
@@ -47,5 +50,3 @@ def medianFilter(img, filterSize):
             #calculating median of list
             filteredImg[row,col] = np.median(kernal)
     #removing zero padding 
-    filteredImg = filteredImg[paddingSize:filteredImg.shape[0]-paddingSize, paddingSize:filteredImg.shape[1]-paddingSize]
-    return filteredImg
