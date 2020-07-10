@@ -224,10 +224,7 @@ def getHistogramEqualization(imgId=None,imgUrl=None):
         imgName="histogram_"+imgId+'.png'
         imgName=saveImage(imgName,high_contrast,"histogram")                         
 
-        globalPath=os.getcwd()
-        parentPath= os.path.dirname(os.getcwd())
-        os.chdir(parentPath)
-
+       
         plt.hist(img.ravel(),256,[0,256])
         plt.xlabel('Intensity Values')
         plt.ylabel('Pixel Count')
@@ -340,13 +337,11 @@ def getSobel(imgId=None,imgUrl=None):
 
 def saveImage(filename=None,img=None,typeFilter=None):
     try:
-        globalPath=os.getcwd()
-        parentPath= os.path.dirname(os.getcwd())
-        os.chdir(parentPath)
+
         directory=os.path.join(os.getcwd(),"media",typeFilter,filename)
         if(cv2.imwrite(directory, img)):
             print("SAVED "+directory)
-            os.chdir(globalPath)
+           
         else:
             print("SAVE NI HUI "+directory)
         return directory
