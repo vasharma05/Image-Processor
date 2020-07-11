@@ -110,35 +110,33 @@ def getGradientImage(imgId=None,imgUrl=None):
         print(e)
 
 def getNegativeImage(imgId=None,imgUrl=None):
-    try:
-        S = 255
+    # try:
+    S = 255
+    img = cv2.imread(imgUrl)
+    k = len(img.shape)
+    # if in rgb
+    if(k==3):
+        # open in rgb  
+        B,G,R = cv2.split(img)
+        B[:] = [S-x for x in B]     #inverting blue
+        G[:] = [S-x for x in G]     #inverting green    
+        R[:] = [S-x for x in R]     #inverting red
+        #saving image
+        my_img = cv2.merge((B, G, R)) 
+        img_name='inverted_'+ imgId+ '.png'
+        img_name=saveImage(img_name,my_img,"negative")   
+        return[img_name]
+    #if in grayscale or binary
+    else:    
+        # open in grayscale 
+        my_img = np.array([S-x for x in img])
+        img_name='inverted_'+ imgId+ '.png'
+        img_name=saveImage(img_name,my_img,"negative")
+         
+        return[img_name]
 
-        img = cv2.imread(imgUrl)
-        k = len(img.shape)
-        # if in rgb
-        if(k==3):
-            # open in rgb  
-            B,G,R = cv2.split(img)
-            B[:] = [S-x for x in B]     #inverting blue
-            G[:] = [S-x for x in G]     #inverting green    
-            R[:] = [S-x for x in R]     #inverting red
-
-            #saving image
-            my_img = cv2.merge((B, G, R)) 
-            img_name='inverted_'+ imgId+ '.png'
-            img_name=saveImage(img_name,my_img,"negative")   
-            return[img_name]
-        #if in grayscale or binary
-        else:    
-            # open in grayscale 
-            my_img = np.array([S-x for x in img])
-            img_name='inverted_'+ imgId+ '.png'
-            img_name=saveImage(img_name,my_img,"negative")
-             
-            return[img_name]
-
-    except Exception as e:
-            print("Url not given")
+    # except Exception as e:
+    #         print("Url not given")
 
 def getGrayscaleImage(imgId=None,imgUrl=None):
     try:
@@ -190,66 +188,51 @@ def getSegemtationImage(imgId=None,imgUrl=None):
         print("SENd link")
    
 def getHistogramEqualization(imgId=None,imgUrl=None):
-    try:
-        img = cv2.imread(imgUrl,0)
-
-        #Initialize intensity values with 256 zeroes
-        intensity_count = [0] * 256         
-
-        height,width = img.shape[:2]        
-        N = height * width                  
-
-        #Array for new_image
-        high_contrast = np.zeros(img.shape) 
-
-        for i in range(0,height):
-            for j in range(0,width):
-                intensity_count[img[i][j]] += 1     #Find pixels count for each intensity
-
-        L = 256
-
-        intensity_count,total_values_used = np.histogram(img.flatten(),L,[0,L])      
-        pdf_list = np.ceil(intensity_count*(L-1)/img.size)                    #Calculate PDF
-        cdf_list = pdf_list.cumsum()                                                #Calculate CDF
-
-
-        for y in range(0, height):
-            for x in range(0, width): 
-            #Apply the new intensities in our new image
-                high_contrast[y,x] = cdf_list[img[y,x]]                         
-
-        
-        
-
-        #PLOT THE HISTOGRAMS
-        imgName="histogram_"+imgId+'.png'
-        imgName=saveImage(imgName,high_contrast,"histogram")                         
-
-       
-        plt.hist(img.ravel(),256,[0,256])
-        plt.xlabel('Intensity Values')
-        plt.ylabel('Pixel Count')
-        name_plt1='histogram_plt1_'+imgId+".png"
-        
-        name_plt1=os.path.join(os.getcwd(),"media","histogram",name_plt1)
-        plt.savefig(name_plt1)  
-        print("SAVED "+name_plt1)
-        
-
-        plt.hist(high_contrast.ravel(),256,[0,256]) 
-        plt.xlabel('Intensity Values')
-        plt.ylabel('Pixel Count')
-        name_plt2='histogram_plt2_'+imgId+".png"
-        
-        name_plt2=os.path.join(os.getcwd(),"media","histogram",name_plt2)
-        plt.savefig(name_plt2)
-        print("SAVED "+name_plt2)
-
-        os.chdir(globalPath)
-
-        return[name_plt1,name_plt2,imgName]
-    except Exception as e:
-        print("SENd link")
+    # try:
+    img = cv2.imread(imgUrl,0)
+    #Initialize intensity values with 256 zeroes
+    intensity_count = [0] * 256         
+    height,width = img.shape[:2]        
+    N = height * width                  
+    #Array for new_image
+    high_contrast = np.zeros(img.shape) 
+    for i in range(0,height):
+        for j in range(0,width):
+            intensity_count[img[i][j]] += 1     #Find pixels count for each intensity
+    L = 256
+    intensity_count,total_values_used = np.histogram(img.flatten(),L,[0,L])      
+    pdf_list = np.ceil(intensity_count*(L-1)/img.size)                    #Calculate PDF
+    cdf_list = pdf_list.cumsum()                                                #Calculate CDF
+    for y in range(0, height):
+        for x in range(0, width): 
+        #Apply the new intensities in our new image
+            high_contrast[y,x] = cdf_list[img[y,x]]                         
+    
+    
+    #PLOT THE HISTOGRAMS
+    imgName="histogram_"+imgId+'.png'
+    imgName=saveImage(imgName,high_contrast,"histogram")                         
+    
+    plt.hist(img.ravel(),256,[0,256])
+    plt.xlabel('Intensity Values')
+    plt.ylabel('Pixel Count')
+    name_plt1='histogram_plt1_'+imgId+".png"
+    
+    name_plt1=os.path.join("media","histogram",name_plt1)
+    plt.savefig(name_plt1)  
+    print("SAVED "+name_plt1)
+    
+    plt.hist(high_contrast.ravel(),256,[0,256]) 
+    plt.xlabel('Intensity Values')
+    plt.ylabel('Pixel Count')
+    name_plt2='histogram_plt2_'+imgId+".png"
+    
+    name_plt2=os.path.join("media","histogram",name_plt2)
+    plt.savefig(name_plt2)
+    print("SAVED "+name_plt2)
+    return['http://localhost:8000/{}'.format(name_plt1),'http://localhost:8000/{}'.format(name_plt2),imgName]
+    # except Exception as e:
+    #     print("SENd link")
 
 def getAverageFilter(imgId=None,imgUrl=None,size=None):
     # try:
@@ -337,6 +320,7 @@ def saveImage(filename=None,img=None,typeFilter=None):
         # directory=os.path.join(BASE_DIR,"media",typeFilter,filename)
         d = 'media/{}/{}'.format(typeFilter, filename)
         print(d)
+        print(img)
         if(cv2.imwrite(d, img)):
             print("SAVED "+ d)
         else:

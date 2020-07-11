@@ -3,14 +3,9 @@ from django.contrib.auth.models import User
 from . import models
 from rest_framework import serializers
 
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+
 
 class userImageSerializer(ModelSerializer):
-    # user = UserSerializer(required=False)
     image = serializers.ImageField()
     class Meta:
         model = models.userImage
@@ -74,3 +69,10 @@ class SobelImageSerializer(ModelSerializer):
     class Meta:
         model = models.SobelImage
         fields = '__all__'
+
+class UserSerializer(ModelSerializer):
+    images = userImageSerializer(read_only=True, many=True)
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'images']
+        extra_kwargs = {'password': {'write_only': True}}

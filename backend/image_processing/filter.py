@@ -50,3 +50,5 @@ def medianFilter(img, filterSize):
             #calculating median of list
             filteredImg[row,col] = np.median(kernal)
     #removing zero padding 
+    filteredImg = filteredImg[paddingSize:filteredImg.shape[0]-paddingSize, paddingSize:filteredImg.shape[1]-paddingSize]
+    return filteredImg

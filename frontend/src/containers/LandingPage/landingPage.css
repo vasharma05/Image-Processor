@@ -1,0 +1,19 @@
+.header{
+    box-shadow: 0 5px 8px 0 #00000040;
+    border-radius: 0 0 32px 32px;
+    background-color: white;
+}
+.img-ctn{
+    /* border: 1px solid #2962ff; */
+    box-shadow: 0 0 32px 0 #00000040;
+}
+.add-icon{
+    cursor: pointer;
+}
+.float{
+    border-radius: 32px;
+    background-color: white;
+}
+body{
+    background-color: #eeeeee;
+}

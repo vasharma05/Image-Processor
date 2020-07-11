@@ -8,10 +8,10 @@ class Api {
     static post(route, params){
         return this.request(route, params, 'post')
     }
-    static getWithToken(route, token, params){
+    static getWithToken(route, params, token){
         return this.requestWithToken(route, params, 'GET', token)
     }
-    static postWithToken(route, token, params){
+    static postWithToken(route, params, token){
         return this.requestWithToken(route, params, 'POST', token)
     }
     static requestWithToken(route, params, verb, token){

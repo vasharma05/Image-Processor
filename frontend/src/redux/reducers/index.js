@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
 import authReducers from './auth'
-import chatbotReducer from './chatbot'
+import userReducer from './user'
 
 const rootReducer = combineReducers({
     auth: authReducers,
-    chatbot: chatbotReducer
+    user: userReducer
 })
 
 export default rootReducer
